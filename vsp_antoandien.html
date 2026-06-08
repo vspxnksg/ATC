@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An toàn Điện VSP — Tra cứu đáp án</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#f0883e;--card:#1c2128;--hover:#21262d;--radius:8px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"IBM Plex Sans",sans-serif;min-height:100vh}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:flex-start;gap:12px;position:sticky;top:0;z-index:100}
+  .logo{font-size:16px;font-weight:700;color:var(--accent);white-space:nowrap;padding-top:8px;line-height:1.3}
+  .logo span{display:block;color:var(--muted);font-weight:400;font-size:11px;margin-top:2px}
+  .sw{flex:1;display:flex;flex-direction:column;gap:6px;max-width:700px}
+  .sw textarea{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:"IBM Plex Sans",sans-serif;font-size:14px;padding:10px 14px;resize:none;outline:none;line-height:1.5;min-height:44px;max-height:150px;transition:border-color .2s}
+  .sw textarea:focus{border-color:var(--accent)}
+  .sw textarea::placeholder{color:var(--muted)}
+  .sw-row{display:flex;gap:8px;align-items:center}
+  .btn-search{background:var(--accent);color:#0d1117;border:none;border-radius:6px;padding:7px 18px;font-family:"IBM Plex Sans",sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;white-space:nowrap}
+  .btn-search:hover{opacity:.85}
+  .btn-clear{background:none;border:1px solid var(--border);border-radius:6px;padding:7px 12px;color:var(--muted);font-size:13px;cursor:pointer}
+  .btn-clear:hover{color:var(--text);border-color:var(--muted)}
+  .stats{color:var(--muted);font-size:12px;margin-left:auto;padding-top:8px;white-space:nowrap}
+  main{max-width:900px;margin:20px auto;padding:0 14px 60px}
+  .hint-box{text-align:center;padding:50px 20px;color:var(--muted)}
+  .hint-box .ic{font-size:44px;margin-bottom:10px}
+  .hint-box h2{font-size:17px;color:var(--text);margin-bottom:8px}
+  .hint-box p{font-size:13px;line-height:1.8}
+  .rc{font-size:13px;color:var(--muted);margin-bottom:10px;padding:0 2px;display:none}
+  .rc strong{color:var(--accent)}
+  .cards{display:flex;flex-direction:column;gap:10px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:grid;grid-template-columns:36px 1fr 50px;gap:12px;align-items:start;transition:border-color .15s,background .15s}
+  .card:hover{border-color:rgba(240,136,62,.35);background:var(--hover)}
+  .num{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);padding-top:2px}
+  .qblock{}
+  .qtext{font-size:13.5px;line-height:1.65;color:var(--text)}
+  .qhint{font-size:12px;line-height:1.6;color:var(--muted);margin-top:8px;padding:8px 10px;background:#ffffff08;border-left:3px solid var(--border);border-radius:0 4px 4px 0}
+  .qhint .hlabel{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+  .ans{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:6px;font-family:"IBM Plex Mono",monospace;font-size:22px;font-weight:700;flex-shrink:0}
+  .A{background:#1f3a2c;color:#3fb950;border:1.5px solid rgba(63,185,80,.3)}
+  .B{background:#1a2d4a;color:#58a6ff;border:1.5px solid rgba(88,166,255,.3)}
+  .C{background:#3d2a1a;color:#f0883e;border:1.5px solid rgba(240,136,62,.3)}
+  .D{background:#3a1a2c;color:#bc8cff;border:1.5px solid rgba(188,140,255,.3)}
+  .nr{text-align:center;padding:48px 20px;color:var(--muted);display:none}
+  footer{text-align:center;font-size:11px;color:var(--muted);padding:10px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">&#9889; An toàn Điện<span>VSP · Tra cứu đáp án</span></div>
+  <div class="sw">
+    <textarea id="box" placeholder="Paste câu hỏi vào đây..." rows="2"></textarea>
+    <div class="sw-row">
+      <button class="btn-search" id="btnSearch">&#128269; Tìm kiếm</button>
+      <button class="btn-clear" id="btnClear">Xoá</button>
+      <span class="stats" id="stats">43 câu</span>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="hint-box" id="hintBox">
+    <div class="ic">&#9889;</div>
+    <h2>Tra cứu đáp án — An toàn Điện VSP</h2>
+    <p>Copy câu hỏi từ trang thi &rarr; Paste vào ô trên &rarr; Nhấn <strong style="color:var(--accent)">Tìm kiếm</strong> hoặc <strong style="color:var(--accent)">Enter</strong><br><br>
+    Đáp án&nbsp;
+    <strong style="color:#3fb950">A</strong> &nbsp;
+    <strong style="color:#58a6ff">B</strong> &nbsp;
+    <strong style="color:#f0883e">C</strong> &nbsp;
+    <strong style="color:#bc8cff">D</strong></p>
+  </div>
+  <div class="rc" id="rc"></div>
+  <div class="cards" id="cards"></div>
+  <div class="nr" id="nr">
+    <div style="font-size:32px;margin-bottom:8px">&#128565;</div>
+    <p>Không tìm thấy câu khớp.<br>Thử rút ngắn hoặc dùng vài từ khoá chính.</p>
+  </div>
+</main>
+<footer>Vietsovpetro &middot; Xưởng MWD &middot; 43 câu hỏi An toàn Điện</footer>
+
+<script>
+const DATA=[{"stt": 1, "keyword": "noi at bao ve la", "question": "Nối đất bảo vệ là gì. Mục 1.7.7. (QPLĐTBĐ.)", "hint": "Nối đất các bộ phận của thiết bị điện nhằm đảm bảo an toàn điện.", "answer": "A"}, {"stt": 2, "keyword": "tiep ia tu nhien la", "question": "Tiếp địa tự nhiên là gì. Mục 1.7.14. (QPLĐTBĐ.)", "hint": "Các phần dẫn điện nằm tiếp xúc với đất của hệ thống đường ống, nhà, công trình sử dụng vào mục đích tiếp địa)", "answer": "D"}, {"stt": 3, "keyword": "trong nhung truong hop nao", "question": "Trong những trường hợp nào các thiết bị điện phải được tiếp đất hoặc nối không (không kể các thiết bị điện ở khu vực nguy hiểm nổ)? (1.7.33) (QPLĐTBĐ.)", "hint": "Đối với điện áp xoay chiều >=380V và điện áp một chiều >= 440V: tất cả các thiết bị điện; đối với điện áp xoay chiều từ 42V-380V và điện áp một chiều từ 110V-440V -chỉ cần đối với thiết bị điện trong phòng có mức nguy hiểm cao, đặc biệt cao, cũng như với thiết bị ngoài trời;", "answer": "A"}, {"stt": 4, "keyword": "loai tiep ia nao can", "question": "Loại tiếp địa nào cần được ưu tiên dùng để tiếp đất cho thiết bị điện (1.7.35) (QPLĐTBĐ.)", "hint": "Tiếp địa tự nhiên.", "answer": "C"}, {"stt": 5, "keyword": "trong nhung truong hop nao", "question": "Trong những trừơng hợp nào cho phép sử dụng lớp vỏ bọc kim loại của các dây dẫn dạng ống, dây cáp chịu lực khi đặt dây điện, vỏ bọc kim loại cho các ống cách ly, vòi kim loại cũng như các vỏ bọc bằng đồng và chì của các dây dẫn và cáp làm dây tiếp đất hoặc dây trung tính bảo vệ. Mục 1.7.74. (QPLĐTBĐ.)", "hint": "Cấm sử dụng .", "answer": "B"}, {"stt": 6, "keyword": "mau nao dung e chi", "question": "Màu nào dùng để chỉ dây pha (2.1.31) (QPLĐTBĐ.)", "hint": "Một trongcác màu: Đen, nâu, đỏ, tím, xám, hồng, trắng, cam, lam", "answer": "A"}, {"stt": 7, "keyword": "co uoc lap cong tac", "question": "Có được lắp công tắc trong phòng tắm, phòng vệ sinh, phòng rửa của nhà tắm hơi, nhà tắm hơi, phòng giặt là? (7.1.39) (QPLĐTBĐ.)", "hint": "Không được phép", "answer": "B"}, {"stt": 8, "keyword": "co uoc lap cong tac", "question": "Có được lắp công tắc trong phòng rửa tay? (7.1.39) (QPLĐTBĐ.)", "hint": "Được phép", "answer": "C"}, {"stt": 9, "keyword": "khung kim loai cua bon", "question": "Khung kim loại của bồn tắm nằm, bồn tắm đứng trong các phòng tắm của các công trình công cộng phải được nối vào đâu? (7.1.55) (QPLĐTBĐ.)", "hint": "Nối bằng dây kim loại với ống nước bằng thép.", "answer": "A"}, {"stt": 10, "keyword": "thanh tiep at i ho", "question": "Thanh tiếp đất đi hở phải được sơn màu gì? (2.7.7) (QPLĐTBĐ.)", "hint": "Màu đen", "answer": "A"}, {"stt": 11, "keyword": "the nao la che chan", "question": "Thế nào là che chắn bảo vệ ? (Phụ lục)( TCVN 5556:1991 - Thiết bị điện hạ áp - Yêu cầu chung về bảo vệ)", "hint": "Là các biện pháp để bảo vệ chống chạm ngẫu nhiên vào các bộ phận mang điện.", "answer": "A"}, {"stt": 12, "keyword": "ien ap an toan la", "question": "Điện áp an toàn là gì? (Phụ lục) (TCVN 5556:1991 - Thiết bị điện hạ áp - Yêu cầu chung về bảo vệ)", "hint": "Là điện áp nhỏ không gây nên những tác động nguy hiểm hoặc có hại đối với con người.", "answer": "B"}, {"stt": 13, "keyword": "cac bien phap xu ly", "question": "Các biện pháp xử lý sau khi nạn nhân đã được tách ra khỏi nguồn điện và khi nạn nhân chưa mất tri giác (mục 2.1) (Quy định về an toàn điện, ban hành theo Quyết định số 41/2001/QĐ-BCN)", "hint": "Đưa nạn nhân ra chỗ thoáng mát, yên tĩnh. Đặt nạn nhân nằm ngửa, kê đầu cao hơn cho dễ thở. Cho nạn nhân uống trà nóng pha đường, nước cam, chanh.", "answer": "C"}, {"stt": 14, "keyword": "cac bien phap xu ly", "question": "Các biện pháp xử lý sau khi nạn nhân đã được tách ra khỏi nguồn điện và khi nạn nhân bị mất tri giác, nhưng vẫn thở được (mục 2.2) (Quy định về an toàn điện, ban hành theo Quyết định số 41/2001/QĐ-BCN)", "hint": "Đặt nạn nhân nằm ngửa, nới rộng quần áo, thắt lưng. Moi rớt dãi trong mồm nạn nhân, bấm và day huyệt nhân trung. Có thể cho nạn nhân ngửi amoniac và xoa bóp toàn thân cho nóng lên, đồng thời cử người đi gọi bác sỹ ngay.", "answer": "A"}, {"stt": 15, "keyword": "cac bien phap xu ly", "question": "Các biện pháp xử lý sau khi nạn nhân đã được tách ra khỏi nguồn điện và khi nạn nhân bị mất tri giác, không thở, tim ngừng đập (mục 2.3) (Quy định về an toàn điện, ban hành theo Quyết định số 41/2001/QĐ-BCN)", "hint": "Khẩn trương đưa nạn nhân đến chỗ bằng phẳng, nới rộng quần áo, thắt lưng. Moi rớt dãi trong mồm nạn nhân và tiến hành hô hấp nhân tạo hoặc hà hơi thổi ngạt ngay", "answer": "B"}, {"stt": 16, "keyword": "o day ien tren khong", "question": "Ở dây điện trên không có cho phép một người có nhóm II an toàn điện thực hiện theo chỉ thị các công việc kiểm tra đường dây điện vào ban ngày trong điều kiện thời tiết tốt để đánh giá tình trạng cột điện, kiểm tra các bệ gỗ cột điện (m.2.3.15) không ? (МПОТ-016-2001.)", "hint": "Có cho phép", "answer": "C"}, {"stt": 17, "keyword": "o cac thiet bi ien", "question": "Ở các thiết bị điện có điện áp tới 1000V những nhân viên vận hành khi một mình bảo dưỡng thiết bị điện phải có nhóm mấy an toàn điện (mục 1.3.2): (МПОТ-016-2001.)", "hint": "IV", "answer": "C"}, {"stt": 18, "keyword": "khi lam viec ben trong", "question": "Khi làm việc bên trong máy biến áp để chiếu sáng phải sử dụng (m.4.8.6): (МПОТ-016-2001.)", "hint": "Các đèn chiếu sáng di động có điện áp không quá 12V, có lưới bảo vệ và có cấu tạo của nhà máy hoặc sử dụng các đèn pha dùng ắc quy", "answer": "B"}, {"stt": 19, "keyword": "nhung ai uoc phep thuc", "question": "Những ai được phép thực hiện các thao tác đặt và tháo các tiếp địa ở các thiết bị điện có điện áp tới 1000V (m.3.5.7)? (МПОТ-016-2001.)", "hint": "Một người trong số nhân viên vận hành có nhóm III an toàn điện.", "answer": "A"}, {"stt": 20, "keyword": "co cho phep nhan vien", "question": "Có cho phép nhân viên có nhóm III an toàn điện theo chỉ thị một mình tiến hành sửa chữa và bảo dưỡng thiết bị thông tin liên lạc, đường dấy chiếu sáng nằm bên ngoài buồng thiết bị phân phối ở độ cao không quá 2,5 mét hay không (m.2.3.12) ? (МПОТ-016-2001.)", "hint": "Cho phép", "answer": "C"}, {"stt": 21, "keyword": "co cho phep nhan vien", "question": "Có cho phép nhân viên có nhóm III an toàn điện theo chỉ thị một mình tiến hành bảo dưỡng các thiết bị lọc dầu, phụ trợ khi làm sạch và làm khô dầu hay không (m.2.3.12) ? (МПОТ-016-2001.)", "hint": "Cho phép", "answer": "A"}, {"stt": 22, "keyword": "co cho phep nhan vien", "question": "Có cho phép nhân viên có nhóm III an toàn điện theo chỉ thị một mình tiến hành công việc ở các động cơ điện, các phần cơ khí của các quạt và máy bơm dầu của máy biến áp, máy nén khí (m.2.3.12) ? (МПОТ-016-2001.)", "hint": "Cho phép", "answer": "A"}, {"stt": 23, "keyword": "co cho phep nhan vien", "question": "Có cho phép nhân viên có nhóm III an toàn điện theo chỉ thị một mình giám sát việc sấy khô các máy biến áp, máy phát điện và các trang thiết bị khác đã được ngừng làm việc (m.2.3.12) ? (МПОТ-016-2001.)", "hint": "Cho phép", "answer": "A"}, {"stt": 24, "keyword": "khi nguoi phu trach cong", "question": "Khi người phụ trách công việc được giao thêm nghĩa vụ người cho phép tiến hành công việc thì phải cùng với ai chuẩn bị nơi làm việc (m.2.7.2). (МПОТ-016-2001.)", "hint": "Cùng với một thành viên trong đội có nhóm III an toàn điện", "answer": "C"}, {"stt": 25, "keyword": "nguoi phu trach cong viec", "question": "Người phụ trách công việc thực hiện theo giấy phép ở các thiết bị điện có điện áp tới 1000V phải có nhóm mấy an toàn điện (m.2.1.7) ? (МПОТ-016-2001.)", "hint": "III", "answer": "A"}, {"stt": 26, "keyword": "chi uoc tien hanh lam", "question": "Chỉ được tiến hành làm việc theo trình tự vận hành thường kỳ ở các thiết bị điện có điện áp (m.2.4.1): (МПОТ-016-2001.)", "hint": "Tới 1000V", "answer": "A"}, {"stt": 27, "keyword": "trong truong hop nao co", "question": "Trong trường hợp nào có thể cắt điện áp mà không cần chờ người phụ trách công việc cho phép? (m.1.3.13) (МПОТ-016-2001.)", "hint": "Khi có tai nạn để giải phóng người bị nạn khỏi tác động của dòng điện", "answer": "A"}, {"stt": 28, "keyword": "nhung nguoi lam viec mot", "question": "Những người làm việc một mình theo chỉ thị để thu dọn các hành lang thiết bị phân phối kín và các phòng điện có các trang thiết bị điện áp tới và trên 1000V và ở đó các phần mang điện được che chắn phải có nhóm an toàn (m.2.3.13): (МПОТ-016-2001.)", "hint": "ll", "answer": "A"}, {"stt": 29, "keyword": "viec thu don trong thiet", "question": "Việc thu dọn trong thiết bị phân phối hở có thể do một người có nhóm an toàn điện (m.2.3.13): (МПОТ-016-2001.)", "hint": "lll", "answer": "B"}, {"stt": 30, "keyword": "trong nhung phong co cac", "question": "Trong những phòng có các bảng phân phối đặt riêng biệt điện áp tới 1000V việc thu dọn có thể do một người có nhóm an toàn điện (m.2.3.13): (МПОТ-016-2001.)", "hint": "I", "answer": "A"}, {"stt": 31, "keyword": "co cho phep su dung", "question": "Có cho phép sử dụng đèn để kiểm tra sự không có điện áp ở các thiết bị điện điện áp tới 1000V có nối trung tính hay không ? (МПОТ-016-2001.)", "hint": "Không cho phép", "answer": "B"}, {"stt": 32, "keyword": "khi lam viec mot minh", "question": "Khi làm việc một mình ở các thiết bị điện có điện áp tới 1000V ở trong các phòng ngoại trừ các phòng đặc biệt nguy hiểm do dòng điện gây ra, người làm việc phải có nhóm mấy an toàn (m2.3.10): (МПОТ-016-2001.)", "hint": "", "answer": "A"}, {"stt": 33, "keyword": "vung bao ve cua uong", "question": "Vùng bảo vệ của đường dây điện trên không có điện áp tới 1kV là: (МПОТ-016-2001.)", "hint": "2 mét", "answer": "A"}, {"stt": 34, "keyword": "ien ap nao dung e", "question": "Điện áp nào dùng để cấp nguồn cho đèn điện di động khi tiến hành công việc sửa chữa? (2.12.6) (ПТЭЭП)", "hint": "Không quá 42V", "answer": "C"}, {"stt": 35, "keyword": "ien ap nao dung e", "question": "Điện áp nào dùng để cấp nguồn cho đèn điện di động tại nơi có mức độ nguy hiểm cao về điện giật ? (2.12.6) (ПТЭЭП)", "hint": "Không quá 12V", "answer": "A"}, {"stt": 36, "keyword": "neu thoi han kiem tra", "question": "Nêu thời hạn kiểm tra kiến thức định kỳ đối với nhân viên kỹ thuật điện mà những người này trực tiếp tổ chức và thực hiện công việc bảo dưỡng thiết bị điện đang hoạt động? (1.4.20) (ПТЭЭП)", "hint": "1 lần trong 1 năm", "answer": "C"}, {"stt": 37, "keyword": "thiet bi ien nao uoc", "question": "Thiết bị điện nào được coi là đang hoạt động? (ПТЭЭП)", "hint": "Thiết bị điện hoặc một phần của nó đang có điện áp, hoặc có thể được cấp điện áp đến bởi thiết bị đóng cắt.", "answer": "A"}, {"stt": 38, "keyword": "nhan vien nao can uoc", "question": "Nhân viên nào cần được phong nhóm I về an toàn điện? (1.4.4) (ПТЭЭП)", "hint": "Nhân viên phi kỹ thuật điện mà khi thực hiện công việc có khả năng xuất hiện nguy cơ bị điện giật", "answer": "B"}, {"stt": 39, "keyword": "co the phong cap nhom", "question": "Có thể phong cấp nhóm III hoặc cao hơn về an toàn điện cho thợ hàn đã qua huấn luyện chuyên môn để thực hiện công việc của nhân viên vận hành-sửa chữa với quyền được đấu điện và ngắt điện cho các thiết bị hàn điện di động hay không? (3.1.15) (ПТЭЭП)", "hint": "Có thể", "answer": "B"}, {"stt": 40, "keyword": "ai uoc phep au ien", "question": "Ai được phép đấu điện và ngắt điện các thiết bị hàn ? (3.1.17) (ПТЭЭП)", "hint": "Nhân viên kỹ thuật điện có nhóm an toàn không dưới III", "answer": "C"}, {"stt": 41, "keyword": "ai co the tien hanh", "question": "Ai có thể tiến hành đấu dây nguồn cấp điện cho thiết bị điện di động và thiết bị phụ trợ cho chúng vào lưới điện có dùng mối nối tiếp xúc tháo rời ra được, cũng như khi ngắt nguồn nuôi chúng? (3.5.9) (ПТЭЭП)", "hint": "Nhân viên kỹ thuật điện có nhóm III an toàn điện, vận hành lưới điện này", "answer": "A"}, {"stt": 42, "keyword": "trong thoi han nao phai", "question": "Trong thời hạn nào phải kiểm tra định kỳ thiết bị điện di động và thiết bị phụ trợ đi kèm với chúng (3.5.11) (ПТЭЭП)", "hint": "Không ít hơn 1 lần trong 6 tháng", "answer": "A"}, {"stt": 43, "keyword": "co uoc phep hay khong", "question": "Có được phép hay không được phép vận hành thiết bị điện di động và xách tay loại 0 trong điều kiện đặc biệt không thuận lợi, trong phòng đặc biệt nguy hiểm và phòng có mức nguy hiểm cao ? (3.5.15) (ПТЭЭП)", "hint": "Không được phép", "answer": "A"}];
+
+function tok(s){
+  return s.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9 ]/g,' ')
+    .split(' ').filter(function(w){return w.length>1});
+}
+
+var IDX={};
+DATA.forEach(function(item,i){
+  var ws=tok(item.question+' '+item.keyword+' '+(item.hint||''));
+  var seen={};
+  ws.forEach(function(w){
+    if(!seen[w]){
+      if(!IDX[w])IDX[w]=[];
+      IDX[w].push(i);
+      seen[w]=1;
+    }
+  });
+});
+var KEYS=Object.keys(IDX);
+
+function doSearch(q){
+  var qw=tok(q);
+  if(!qw.length)return[];
+  var sc={};
+  qw.forEach(function(w){
+    (IDX[w]||[]).forEach(function(i){sc[i]=(sc[i]||0)+3});
+    KEYS.forEach(function(k){
+      if(k!==w&&k.indexOf(w)===0)(IDX[k]||[]).forEach(function(i){sc[i]=(sc[i]||0)+1});
+    });
+  });
+  return Object.keys(sc).map(function(i){return[+i,sc[i]]})
+    .sort(function(a,b){return b[1]-a[1]})
+    .slice(0,10).map(function(x){return DATA[x[0]]});
+}
+
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+var box=document.getElementById('box');
+var btnSearch=document.getElementById('btnSearch');
+var btnClear=document.getElementById('btnClear');
+var statsEl=document.getElementById('stats');
+var hintBox=document.getElementById('hintBox');
+var rcEl=document.getElementById('rc');
+var cardsEl=document.getElementById('cards');
+var nrEl=document.getElementById('nr');
+
+function reset(){
+  cardsEl.innerHTML='';
+  hintBox.style.display='block';
+  rcEl.style.display='none';
+  nrEl.style.display='none';
+  statsEl.textContent='43 câu';
+}
+
+function render(results){
+  hintBox.style.display='none';
+  if(!results.length){
+    cardsEl.innerHTML='';
+    rcEl.style.display='none';
+    nrEl.style.display='block';
+    return;
+  }
+  nrEl.style.display='none';
+  rcEl.style.display='block';
+  rcEl.innerHTML='Tìm thấy <strong>'+results.length+'</strong> câu khớp';
+  cardsEl.innerHTML=results.map(function(item){
+    var hintHtml='';
+    if(item.hint&&item.hint.trim()){
+      hintHtml='<div class="qhint"><div class="hlabel">Gợi ý đáp án</div>'+escHtml(item.hint)+'</div>';
+    }
+    return '<div class="card">'
+      +'<div class="num">#'+item.stt+'</div>'
+      +'<div class="qblock">'
+        +'<div class="qtext">'+escHtml(item.question)+'</div>'
+        +hintHtml
+      +'</div>'
+      +'<div class="ans '+item.answer+'">'+item.answer+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function runSearch(){
+  var q=box.value;
+  if(!q.trim()){reset();return;}
+  var r=doSearch(q);
+  statsEl.textContent=r.length+' kết quả';
+  render(r);
+}
+
+btnSearch.addEventListener('click',runSearch);
+box.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){e.preventDefault();runSearch();}
+});
+var tmr;
+box.addEventListener('input',function(){
+  clearTimeout(tmr);tmr=setTimeout(runSearch,500);
+});
+box.addEventListener('paste',function(){
+  setTimeout(runSearch,100);
+});
+btnClear.addEventListener('click',function(){
+  box.value='';reset();box.focus();
+});
+</script>
+</body>
+</html>
